@@ -25,6 +25,8 @@
 <script>
 import {reactive} from "vue";
 import axios from "axios";
+import store from "@/scripts/store";
+import router from "@/scripts/router";
 
 export default {
   setup() {
@@ -36,8 +38,13 @@ export default {
     })
     const submit = () => {
       axios.post("/api/account/login", state.form).then((res) => {
+        store.commit('setAccount', res.data);
+        sessionStorage.setItem("id", res.data); //새로고침 시 로그인 풀리는 것을 방지 (원래 backend에서 session이나 token으로 하지만..)
+        router.push({path: "/"});
         console.log(res);
         window.alert("로그인되었습니다");
+      }).catch(() => {
+        window.alert("로그인 정보가 존재하지 않습니다.");
       })
     }
 
